@@ -6,10 +6,54 @@
 <body>
   <canvas id="renderCanvas" style="width: 100%; height: 100%;"></canvas>
   <script type="text/javascript">
-    const canvas = document.getElementById("renderCanvas");
-    const engine = new BABYLON.Engine(canvas, true);
+    let canvas;
+    let engine;
     
-    var createScene = async function () {
+    window.onload = function() {
+      canvas = document.getElementById("renderCanvas");
+      engine = new BABYLON.Engine(canvas, true);
+      
+      createScene().then(scene=>{
+        addObjects(scene);
+        engine.runRenderLoop(function () {
+          if (scene.activeCamera) {
+            scene.render();
+          }
+        });     
+      });
+    }
+   
+    function addObjects(scene){    
+      const box = BABYLON.MeshBuilder.CreateBox("box", {width: 0.5, height: 0.5, depth: 0.5});
+      box.position.x = 0.0;
+      box.position.y = 1;
+      const boxMaterial = new BABYLON.StandardMaterial("material", scene);
+      boxMaterial.diffuseColor = BABYLON.Color3.Random();
+      box.material = boxMaterial;
+      var sixDofDragBehavior = new BABYLON.SixDofDragBehavior();
+      sixDofDragBehavior.allowMultiPointer=false;
+      sixDofDragBehavior.rotateDraggedObject=false;
+      sixDofDragBehavior.rotateWithMotionController=false;
+      box.addBehavior(sixDofDragBehavior);
+      
+      const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter:0.5}, scene); 
+      sphere.position.x=1;
+      sphere.position.y=1;
+          
+      var gizmoManager = new BABYLON.GizmoManager(scene);
+      gizmoManager.boundingBoxGizmoEnabled = true;
+      gizmoManager.gizmos.boundingBoxGizmo.setEnabledScaling(true,true);
+      gizmoManager.gizmos.boundingBoxGizmo.scaleBoxSize=0.04;
+      gizmoManager.gizmos.boundingBoxGizmo.rotationSphereSize=0.05;
+      gizmoManager.boundingBoxDragBehavior.rotateWithMotionController=false;
+      gizmoManager.boundingBoxDragBehavior.allowMultiPointer=false;
+      gizmoManager.attachableMeshes = [sphere];
+      
+      const ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 1, height: 1});
+      
+    }
+    
+    async function createScene() {
       // This creates a basic Babylon Scene object (non-mesh)
       var scene = new BABYLON.Scene(engine);
       
@@ -28,64 +72,17 @@
       camera.attachControl(canvas, true);
 
       const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0));
-
-      const box = BABYLON.MeshBuilder.CreateBox("box", {width: 0.5, height: 0.5, depth: 0.5});
-      box.position.x = 0.0;
-      box.position.y = 1;
-      const boxMaterial = new BABYLON.StandardMaterial("material", scene);
-      boxMaterial.diffuseColor = BABYLON.Color3.Random();
-      box.material = boxMaterial;
-
-      const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter:0.5}, scene); 
-      sphere.position.x=1;
-      sphere.position.y=1;
-     
-
-      
-      var gizmoManager = new BABYLON.GizmoManager(scene);
-      gizmoManager.boundingBoxGizmoEnabled = true;
-      gizmoManager.gizmos.boundingBoxGizmo.setEnabledScaling(true,true);
-      gizmoManager.gizmos.boundingBoxGizmo.scaleBoxSize=0.04;
-      gizmoManager.gizmos.boundingBoxGizmo.rotationSphereSize=0.05;
-      gizmoManager.boundingBoxDragBehavior.rotateWithMotionController=false;
-      gizmoManager.boundingBoxDragBehavior.allowMultiPointer=false;
-      gizmoManager.attachableMeshes = [sphere];
-      
-      const ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 1, height: 1});
-      
-     
-      var sixDofDragBehavior = new BABYLON.SixDofDragBehavior();
-      sixDofDragBehavior.allowMultiPointer=false;
-      sixDofDragBehavior.rotateDraggedObject=false;
-      sixDofDragBehavior.rotateWithMotionController=false;
-      box.addBehavior(sixDofDragBehavior);
-      
-      const xr = await scene.createDefaultXRExperienceAsync(
-        {
-          //floorMeshes: [ground]
-        }
-      );
+    
+      const xr = await scene.createDefaultXRExperienceAsync({});
       
       if (!xr.baseExperience) {}
       else {
         xr.baseExperience.featuresManager.enableFeature(BABYLON.WebXRFeatureName.HAND_TRACKING, "latest", {
-        xrInput: xr.input/*,
-        jointMeshes: {
-            enablePhysics: true
-        }*/
+        xrInput: xr.input
         });
       }
       return scene;
     };
-  
-    
-    createScene().then(sceneToRender => {
-      engine.runRenderLoop(
-        function () {
-          sceneToRender.render();
-        }
-      );
-    });
 </script>
 </body>
 </html>
