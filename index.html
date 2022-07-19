@@ -48,9 +48,9 @@
       sixDofDragBehavior.rotateWithMotionController=false;
       box.addBehavior(sixDofDragBehavior);
       
-      const sphere = BABYLON.MeshBuilder.CreatePolyhedron("oct", {type:1,size: 0.15}, scene); 
-      sphere.position.x=0.5;
-      sphere.position.y=1;
+      const octa = BABYLON.MeshBuilder.CreatePolyhedron("octa", {type:1,size: 0.15}, scene); 
+      octa.position.x=0.5;
+      octa.position.y=1;
           
       var gizmoManager = new BABYLON.GizmoManager(scene);
       gizmoManager.boundingBoxGizmoEnabled = true;
@@ -59,7 +59,7 @@
       gizmoManager.gizmos.boundingBoxGizmo.rotationSphereSize=0.05;
       gizmoManager.boundingBoxDragBehavior.rotateWithMotionController=false;
       gizmoManager.boundingBoxDragBehavior.allowMultiPointer=false;
-      gizmoManager.attachableMeshes = [sphere];
+      gizmoManager.attachableMeshes = [octa];
       
       const ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 1, height: 1});
       
