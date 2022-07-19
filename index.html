@@ -70,20 +70,12 @@
         var scene = new BABYLON.Scene(engine);
         //背景色を設定
         scene.clearColor = new BABYLON.Color3.Black;
-        //Lightを設定 (名前,光の方向の逆,追加先)
+        //Lightを設定 (名前,反射の方向,追加先)
         const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, -0.5),scene);
-        
         //以下、カメラ(視点)の設定。主にPC画面上での動作確認で使用するが、XRカメラの初期位置としても利用
         //https://doc.babylonjs.com/divingDeeper/cameras/camera_introduction
-        //向き
-        const alpha = -Math.PI/2;
-        const beta = Math.PI/2;
-        //カメラの距離
-        const radius = 2;
-        //カメラの注視点
-        const target = new BABYLON.Vector3(0, 0, 0);
-        //上記の情報をもとにカメラを作成
-        const camera = new BABYLON.ArcRotateCamera("camera", alpha, beta, radius, target, scene);
+        //カメラを作成
+        const camera = new BABYLON.ArcRotateCamera("camera", -Math.PI/2,Math.PI/2, 2, new BABYLON.Vector3(0, 0, 0), scene);
         // This attaches the camera to the canvas
         camera.attachControl(canvas, true);      
         return scene;
