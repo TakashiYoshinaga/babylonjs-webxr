@@ -74,7 +74,7 @@
         const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, -0.5),scene);
         //以下、カメラ(視点)の設定。主にPC画面上での動作確認で使用するが、XRカメラの初期位置としても利用
         //https://doc.babylonjs.com/divingDeeper/cameras/camera_introduction
-        //カメラを作成
+        //カメラを作成(名前, alpha, beta, 注視点からの距離, 注視点,追加先) 
         const camera = new BABYLON.ArcRotateCamera("camera", -Math.PI/2,Math.PI/2, 3, new BABYLON.Vector3(0, 0, 0), scene);
         // This attaches the camera to the canvas
         camera.attachControl(canvas, true);      
