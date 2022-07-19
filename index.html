@@ -8,23 +8,35 @@
   <script type="text/javascript">
     let canvas;
     let engine;
+    let scene;
     
     window.onload = function() {
       canvas = document.getElementById("renderCanvas");
       engine = new BABYLON.Engine(canvas, true);
+           
+      scene= createScene();
+      addObjects();
+      initializeXR();
       
-      createScene().then(scene=>{
-        addObjects(scene);
-        engine.runRenderLoop(function () {
-          if (scene.activeCamera) {
-            scene.render();
-          }
-        });     
-      });
+      engine.runRenderLoop(function () {
+           if (scene.activeCamera) {
+             scene.render();
+           }
+      });     
     }
-   
-    function addObjects(scene){    
-      const box = BABYLON.MeshBuilder.CreateBox("box", {width: 0.5, height: 0.5, depth: 0.5});
+   async function initializeXR(){
+      const xr = await scene.createDefaultXRExperienceAsync({});
+      
+      if (!xr.baseExperience) {}
+      else {
+        xr.baseExperience.featuresManager.enableFeature(BABYLON.WebXRFeatureName.HAND_TRACKING, "latest", {
+        xrInput: xr.input
+        });
+      }
+      return scene;
+   }
+    function addObjects(){    
+      const box = BABYLON.MeshBuilder.CreateBox("box", {width: 0.3, height: 0.3, depth: 0.3});
       box.position.x = 0.0;
       box.position.y = 1;
       const boxMaterial = new BABYLON.StandardMaterial("material", scene);
@@ -32,12 +44,12 @@
       box.material = boxMaterial;
       var sixDofDragBehavior = new BABYLON.SixDofDragBehavior();
       sixDofDragBehavior.allowMultiPointer=false;
-      sixDofDragBehavior.rotateDraggedObject=false;
+      //sixDofDragBehavior.rotateDraggedObject=true;
       sixDofDragBehavior.rotateWithMotionController=false;
       box.addBehavior(sixDofDragBehavior);
       
-      const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter:0.5}, scene); 
-      sphere.position.x=1;
+      const sphere = BABYLON.MeshBuilder.CreatePolyhedron("oct", {type:1,size: 0.15}, scene); 
+      sphere.position.x=0.5;
       sphere.position.y=1;
           
       var gizmoManager = new BABYLON.GizmoManager(scene);
@@ -53,7 +65,7 @@
       
     }
     
-    async function createScene() {
+    function createScene() {
       // This creates a basic Babylon Scene object (non-mesh)
       var scene = new BABYLON.Scene(engine);
       
@@ -72,15 +84,6 @@
       camera.attachControl(canvas, true);
 
       const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0));
-    
-      const xr = await scene.createDefaultXRExperienceAsync({});
-      
-      if (!xr.baseExperience) {}
-      else {
-        xr.baseExperience.featuresManager.enableFeature(BABYLON.WebXRFeatureName.HAND_TRACKING, "latest", {
-        xrInput: xr.input
-        });
-      }
       return scene;
     };
 </script>
