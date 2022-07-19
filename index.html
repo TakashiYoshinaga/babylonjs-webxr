@@ -1,91 +1,96 @@
 <html>
-    <head>
-        <title>Babylon.js sample code</title>
-        <script src="https://cdn.babylonjs.com/babylon.js"></script>
-    </head>
-<body>
-  <canvas id="renderCanvas" style="width: 100%; height: 100%;"></canvas>
-  <script type="text/javascript">
-    let canvas;
-    let engine;
-    let scene;
-    
-    window.onload = function() {
-      canvas = document.getElementById("renderCanvas");
-      engine = new BABYLON.Engine(canvas, true);
-           
-      scene= createScene();
-      addObjects();
-      initializeXR();
+  <head>
+    <title>AR Fukuoke</title>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script type="text/javascript">
+      let canvas;
+      let engine;
+      let scene;
       
-      engine.runRenderLoop(function () {
-           if (scene.activeCamera) {
-             scene.render();
-           }
-      });     
-    }
-   async function initializeXR(){
-      const xr = await scene.createDefaultXRExperienceAsync({});
-      
-      if (!xr.baseExperience) {}
-      else {
-        xr.baseExperience.featuresManager.enableFeature(BABYLON.WebXRFeatureName.HAND_TRACKING, "latest", {
-        xrInput: xr.input
-        });
+      window.onload = function() {
+        canvas = document.getElementById("renderCanvas");
+        //Babylon.jsを使ってcanvasに描画する準備 (描画先,アンチエイリアス)
+        engine = new BABYLON.Engine(canvas, true);
+        //カメラやライトの設定を行ったscene(3D空間)を取得
+        scene= createScene();
+        addObjects();
+        initializeXR();
+        
+        engine.runRenderLoop(function () {
+          if (scene.activeCamera) {
+            scene.render();
+          }
+        });     
       }
-      return scene;
-   }
-    function addObjects(){    
-      const box = BABYLON.MeshBuilder.CreateBox("box", {width: 0.3, height: 0.3, depth: 0.3});
-      box.position.x = 0.0;
-      box.position.y = 1;
-      const boxMaterial = new BABYLON.StandardMaterial("material", scene);
-      boxMaterial.diffuseColor = BABYLON.Color3.Random();
-      box.material = boxMaterial;
-      var sixDofDragBehavior = new BABYLON.SixDofDragBehavior();
-      sixDofDragBehavior.allowMultiPointer=false;
-      //sixDofDragBehavior.rotateDraggedObject=true;
-      sixDofDragBehavior.rotateWithMotionController=false;
-      box.addBehavior(sixDofDragBehavior);
       
-      const octa = BABYLON.MeshBuilder.CreatePolyhedron("octa", {type:1,size: 0.15}, scene); 
-      octa.position.x=0.5;
-      octa.position.y=1;
-          
-      var gizmoManager = new BABYLON.GizmoManager(scene);
-      gizmoManager.boundingBoxGizmoEnabled = true;
-      gizmoManager.gizmos.boundingBoxGizmo.setEnabledScaling(true,true);
-      gizmoManager.gizmos.boundingBoxGizmo.scaleBoxSize=0.04;
-      gizmoManager.gizmos.boundingBoxGizmo.rotationSphereSize=0.05;
-      gizmoManager.boundingBoxDragBehavior.rotateWithMotionController=false;
-      gizmoManager.boundingBoxDragBehavior.allowMultiPointer=false;
-      gizmoManager.attachableMeshes = [octa];
+      async function initializeXR(){
+        const xr = await scene.createDefaultXRExperienceAsync({});
+        if (!xr.baseExperience) {}
+        else {
+          xr.baseExperience.featuresManager.enableFeature(BABYLON.WebXRFeatureName.HAND_TRACKING, "latest", {
+            xrInput: xr.input
+          });
+        }
+        return scene;
+      }
       
-      const ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 1, height: 1});
+      function addObjects(){    
+        const box = BABYLON.MeshBuilder.CreateBox("box", {width: 0.3, height: 0.3, depth: 0.3});
+        box.position.x = 0.0;
+        box.position.y = 1;
+        
+        const boxMaterial = new BABYLON.StandardMaterial("material", scene);
+        boxMaterial.diffuseColor = BABYLON.Color3.Random();
+        box.material = boxMaterial;
+        
+        var sixDofDragBehavior = new BABYLON.SixDofDragBehavior();
+        sixDofDragBehavior.allowMultiPointer=false;
+        sixDofDragBehavior.rotateWithMotionController=false;
+        box.addBehavior(sixDofDragBehavior);
+         
+        const octa = BABYLON.MeshBuilder.CreatePolyhedron("octa", {type:1,size: 0.15}, scene); 
+        octa.position.x=0.5;
+        octa.position.y=1;
+        
+        var gizmoManager = new BABYLON.GizmoManager(scene);
+        gizmoManager.boundingBoxGizmoEnabled = true;
+        //スケーリング。(スケーリングの許可,等倍スケーリング)
+        gizmoManager.gizmos.boundingBoxGizmo.setEnabledScaling(true,true);
+        gizmoManager.gizmos.boundingBoxGizmo.scaleBoxSize=0.04;
+        gizmoManager.gizmos.boundingBoxGizmo.rotationSphereSize=0.05;
+        gizmoManager.boundingBoxDragBehavior.rotateWithMotionController=false;
+        gizmoManager.boundingBoxDragBehavior.allowMultiPointer=false;
+        gizmoManager.attachableMeshes = [octa];
+        
+        const ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 1, height: 1});
+      }
       
-    }
-    
-    function createScene() {
-      // This creates a basic Babylon Scene object (non-mesh)
-      var scene = new BABYLON.Scene(engine);
-      
-      // This creates and positions a free camera (non-mesh)
-      //var camera = new BABYLON.FreeCamera("camera1", new BABYLON.Vector3(0, 2, -0.6), scene);
-      scene.clearColor = new BABYLON.Color3.Black;
-      
-      const alpha = -Math.PI/2;//Math.PI/4;
-      const beta = Math.PI/2;;
-      const radius = 2;
-      const target = new BABYLON.Vector3(0, 0, 0);
-
-      const camera = new BABYLON.ArcRotateCamera("Camera", alpha, beta, radius, target, scene);
-      
-      // This attaches the camera to the canvas
-      camera.attachControl(canvas, true);
-
-      const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0));
-      return scene;
-    };
-</script>
-</body>
+      function createScene() {
+        //3D空間を作成
+        var scene = new BABYLON.Scene(engine);
+        //背景色を設定
+        scene.clearColor = new BABYLON.Color3.Black;
+        //Lightを設定 (名前,光の方向の逆,追加先)
+        const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, -0.5),scene);
+        
+        //以下、カメラ(視点)の設定。主にPC画面上での動作確認で使用するが、XRカメラの初期位置としても利用
+        //https://doc.babylonjs.com/divingDeeper/cameras/camera_introduction
+        //向き
+        const alpha = -Math.PI/2;
+        const beta = Math.PI/2;
+        //カメラの距離
+        const radius = 2;
+        //カメラの注視点
+        const target = new BABYLON.Vector3(0, 0, 0);
+        //上記の情報をもとにカメラを作成
+        const camera = new BABYLON.ArcRotateCamera("camera", alpha, beta, radius, target, scene);
+        // This attaches the camera to the canvas
+        camera.attachControl(canvas, true);      
+        return scene;
+      };
+    </script>
+  </head>
+  <body>
+    <canvas id="renderCanvas" style="width: 100%; height: 100%;"></canvas> 
+  </body>
 </html>
