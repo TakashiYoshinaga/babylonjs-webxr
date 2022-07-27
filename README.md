@@ -1,4 +1,4 @@
-# babylonjs-webxr
+# Babylon.js Webxr Sample
 
 Try it on a web browser of your device. (HoloLens 2, Meta Quest 1,2)<br>
 https://takashiyoshinaga.github.io/babylonjs-webxr/
