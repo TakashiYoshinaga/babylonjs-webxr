@@ -8,7 +8,7 @@ https://takashiyoshinaga.github.io/babylonjs-webxr/
 [![](https://img.youtube.com/vi/MyY8gUxv0vA/0.jpg)](https://www.youtube.com/watch?v=MyY8gUxv0vA)
 
 
-## AR Demo (index-ar.html)
+## AR Demo (index_ar.html)
 This works with camera pass throgh if it runs on Meta Quest. <br>
 https://babylon-ar.glitch.me/
 <br>
