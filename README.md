@@ -11,3 +11,6 @@ https://takashiyoshinaga.github.io/babylonjs-webxr/
 ## AR Demo
 This works with camera pass throgh if it runs on Meta Quest. <br>
 https://babylon-ar.glitch.me/
+<br>
+[DemoVideo] <br>
+[![](https://img.youtube.com/vi/RfqHajas-mc/0.jpg)](https://www.youtube.com/watch?v=RfqHajas-mc)
