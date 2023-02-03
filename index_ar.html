@@ -58,7 +58,7 @@
           //カメラの初期位置を調整
           xr.baseExperience.sessionManager.onXRFrameObservable.addOnce(() => {
             xr.baseExperience.camera.position = new BABYLON.Vector3(0,scene.activeCamera.position.y,-2);
-          })         
+          });         
         }     
       }
       //表示オブジェクトの初期化
