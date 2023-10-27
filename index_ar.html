@@ -94,6 +94,9 @@
         let octa = BABYLON.MeshBuilder.CreatePolyhedron("octa", {type:1,size: 0.15}); 
         octa.position.x=0.5;
         octa.position.y=1;
+        let octaMaterial = new BABYLON.StandardMaterial("material2");
+        octaMaterial.diffuseColor = new BABYLON.Color3(0.0,1.0,1.0);
+        octa.material = octaMaterial; 
         
         //boxに手で掴んで移動できる属性を追加
         let dragBehavior = new BABYLON.SixDofDragBehavior();
