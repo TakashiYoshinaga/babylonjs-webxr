@@ -45,21 +45,38 @@
         let xr = await scene.createDefaultXRExperienceAsync(
           {
             uiOptions: {
-            sessionMode: 'immersive-ar'
-            }                                         
-          });    
-        //XRモード利用可能か不可かを確認
-        if (!xr.baseExperience) {}
-        else {
+              sessionMode: 'immersive-ar'
+            } 
+          }
+        );
+        if (xr.baseExperience) {
+          //カメラの初期位置を調整
+          xr.baseExperience.onStateChangedObservable.add((state)=>{
+            if(state === BABYLON.WebXRState.IN_XR){
+              xr.baseExperience.camera.position.set(0,scene.activeCamera.position.y,-2);
+            }        
+          });
           //利用可能な場合はハンドトラッキングをオンにする 
-          xr.baseExperience.featuresManager.enableFeature(BABYLON.WebXRFeatureName.HAND_TRACKING, "latest", {
+          let xrHandFeature=xr.baseExperience.featuresManager.enableFeature(BABYLON.WebXRFeatureName.HAND_TRACKING, "latest", {
             xrInput: xr.input
           });
-          //カメラの初期位置を調整
-          xr.baseExperience.sessionManager.onXRFrameObservable.addOnce(() => {
-            xr.baseExperience.camera.position = new BABYLON.Vector3(0,scene.activeCamera.position.y,-2);
-          });         
-        }     
+          if(xrHandFeature){
+            let box=scene.getMeshByName("box");
+            //描画する直前に毎フレーム行う処理
+            scene.registerBeforeRender(function () {
+              let rightHand = xrHandFeature.getHandByHandedness("right");
+              let leftHand = xrHandFeature.getHandByHandedness("left");
+              if(rightHand && leftHand){
+                let indexR=rightHand.getJointMesh(BABYLON.WebXRHandJoint.INDEX_FINGER_TIP).position;
+                let indexL=leftHand.getJointMesh(BABYLON.WebXRHandJoint.INDEX_FINGER_TIP).position;
+                let length=BABYLON.Vector3.Distance(indexR,indexL);
+                if(length<0.02){
+                  box.rotation=new BABYLON.Vector3(0,box.rotation.y+0.01,0);
+                }
+              }
+            });
+           }
+        }
       }
       //表示オブジェクトの初期化
       function addObjects(){    
