@@ -13,4 +13,4 @@ This works with camera pass throgh if it runs on Meta Quest. <br>
 https://babylon-ar.glitch.me/
 <br>
 [DemoVideo] <br>
-[![](https://img.youtube.com/vi/zlGmVXbXVvs&feature=youtu.be/0.jpg)](https://www.youtube.com/watch?v=zlGmVXbXVvs&feature=youtu.be)
+[![](https://img.youtube.com/vi/zlGmVXbXVvs/0.jpg)](https://www.youtube.com/watch?v=zlGmVXbXVvs)
